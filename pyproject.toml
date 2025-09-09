@@ -1,0 +1,62 @@
+[project]
+name = "flet-payment-app"
+version = "0.1.0"
+description = "Project that uses Flet to build a desktop app for managing payments"
+readme = "README.md"
+requires-python = ">=3.11"
+authors = [
+    { name = "Michel Davidovich", email = "micheldc55@gmail.com" }
+]
+dependencies = [
+  "flet==0.28.3",
+  "matplotlib>=3.9.4",
+  "numpy>=2.0.2",
+  "pandas>=2.3.1",
+  "pydantic>=2.11.7",
+  "pytest>=8.4.1",
+  "seaborn>=0.13.2",
+  "streamlit>=1.48.1",
+]
+
+[tool.flet]
+# org name in reverse domain name notation, e.g. "com.mycompany".
+# Combined with project.name to build bundle ID for iOS and Android apps
+org = "com.mycompany"
+
+# project display name that is used as an app title on Android and iOS home screens,
+# shown in window titles and about app dialogs on desktop.
+product = "flet-payment-app"
+
+# company name to display in about app dialogs
+company = "Flet"
+
+# copyright text to display in about app dialogs
+copyright = "Copyright (C) 2025 by Flet"
+
+[tool.flet.app]
+path = "src"
+
+[tool.uv]
+package = true
+dev-dependencies = [
+    "black>=25.1.0",
+    "flet[all]==0.28.3",
+    "isort>=6.0.1",
+]
+
+[tool.poetry]
+package-mode = false
+
+[tool.poetry.group.dev.dependencies]
+flet = {extras = ["all"], version = "0.28.3"}
+
+[tool.black]
+line-length = 120
+target-version = ['py311']
+include = '\.pyi?$'
+
+[tool.isort]
+profile = "black"
+line_length = 120
+py_version = "311"
+
