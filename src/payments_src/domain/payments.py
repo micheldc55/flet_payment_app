@@ -51,7 +51,7 @@ class PaymentList(BaseModel):
 
     def calculate_total_amount_pending(self) -> NonNegativeFloat:
         return sum(payment.amount for payment in self.payments.values() if payment.status == PaymentStatus.PENDING)
-    
+
     def change_payment_status(self, payment_id: PositiveInt, status: PaymentStatus) -> None:
         self.payments[payment_id].change_status(status)
 
@@ -60,8 +60,8 @@ class PaymentList(BaseModel):
 
     @classmethod
     def _private_attributes(cls):
-        return set(("payments", ))
-    
+        return set(("payments",))
+
     @classmethod
     def get_fields_and_types(cls):
         return {
@@ -114,4 +114,3 @@ class PaymentListFactory:
             pago_mensual=pago_mensual,
             moneda=moneda,
         )
-

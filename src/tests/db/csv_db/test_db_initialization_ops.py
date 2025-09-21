@@ -28,6 +28,7 @@ def dealership_fields():
 def loan_fields():
     return Loan.model_fields
 
+
 @pytest.fixture
 def payment_fields():
     return Payment.model_fields
@@ -47,13 +48,16 @@ def test_initialize_dealership_df(dealership_fields):
     df = initialize_dealership_df()
     assert df.columns.tolist() == list(dealership_fields.keys())
 
+
 def test_initialize_loan_df(loan_fields):
     df = initialize_loan_df()
     assert df.columns.tolist() == list(loan_fields.keys())
 
+
 def test_initialize_payments_df(payment_fields):
     df = initialize_payments_df()
     assert df.columns.tolist() == list(payment_fields.keys())
+
 
 def test_initialize_potential_customers_df(potential_customer_fields):
     df = initialize_potential_customers_df()

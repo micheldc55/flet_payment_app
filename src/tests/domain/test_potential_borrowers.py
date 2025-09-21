@@ -1,8 +1,8 @@
 import pydantic
 import pytest
 
-from payments_src.domain.potential_borrowers import PotentialBorrower
 from payments_src.domain.borrower_enums import PotentialBorrowerStatus
+from payments_src.domain.potential_borrowers import PotentialBorrower
 
 
 def test_borrower():
@@ -20,6 +20,7 @@ def test_borrower():
     assert borrower.notas == "No notes"
     assert borrower.path_to_files == "path/to/files"
     assert borrower.status == PotentialBorrowerStatus.POTENTIAL.value
+
 
 def test_borrower_raises_validation_error():
     with pytest.raises(pydantic.ValidationError):

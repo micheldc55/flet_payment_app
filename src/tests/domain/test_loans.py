@@ -72,11 +72,8 @@ def test_loan(borrower_charles, dealership_automotora_carlos_gonzalez, payment_l
 
 
 def test_loan_factory_create_loan(
-        payment_list_charles,
-        borrower_charles,
-        dealership_automotora_carlos_gonzalez,
-        car_toyota
-    ):
+    payment_list_charles, borrower_charles, dealership_automotora_carlos_gonzalez, car_toyota
+):
     loan = LoanFactory.create_loan(
         loan_id=12345678,
         loan_number=100,
@@ -91,11 +88,8 @@ def test_loan_factory_create_loan(
 
 
 def test_loan_json_serialization_deserialization(
-        borrower_charles, 
-        dealership_automotora_carlos_gonzalez, 
-        payment_list_charles,
-        car_toyota
-    ):
+    borrower_charles, dealership_automotora_carlos_gonzalez, payment_list_charles, car_toyota
+):
     """Test that Loan objects can be serialized to JSON and deserialized back correctly."""
     original_loan = Loan(
         loan_id=12345678,
@@ -105,18 +99,18 @@ def test_loan_json_serialization_deserialization(
         car=car_toyota,
         dealership=dealership_automotora_carlos_gonzalez,
     )
-    
+
     json_dict = original_loan.to_json_dict()
-    
+
     assert isinstance(json_dict["payment_list"], str)
     assert isinstance(json_dict["borrower"], str)
     assert isinstance(json_dict["car"], str)
     assert isinstance(json_dict["dealership"], str)
     assert json_dict["loan_id"] == 12345678
     assert json_dict["loan_readable_code"] == "ACG-0001"
-    
+
     deserialized_loan = Loan.from_json_dict(json_dict)
-    
+
     assert deserialized_loan.loan_id == original_loan.loan_id
     assert deserialized_loan.loan_readable_code == original_loan.loan_readable_code
     assert deserialized_loan.payment_list.model_dump() == original_loan.payment_list.model_dump()
@@ -126,11 +120,8 @@ def test_loan_json_serialization_deserialization(
 
 
 def test_loan_factory_create_loan_from_csv_row(
-        borrower_charles, 
-        dealership_automotora_carlos_gonzalez, 
-        payment_list_charles,
-        car_toyota
-    ):
+    borrower_charles, dealership_automotora_carlos_gonzalez, payment_list_charles, car_toyota
+):
     """Test that LoanFactory can create loans from CSV row data."""
     original_loan = Loan(
         loan_id=12345678,
@@ -142,9 +133,9 @@ def test_loan_factory_create_loan_from_csv_row(
     )
 
     csv_row = original_loan.to_json_dict()
-    
+
     loan_from_csv = LoanFactory.create_loan_from_csv_row(csv_row)
-    
+
     assert loan_from_csv.loan_id == original_loan.loan_id
     assert loan_from_csv.loan_readable_code == original_loan.loan_readable_code
     assert loan_from_csv.payment_list.model_dump() == original_loan.payment_list.model_dump()

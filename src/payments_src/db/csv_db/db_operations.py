@@ -42,7 +42,7 @@ def read_dealership_table() -> pd.DataFrame:
         dtype={
             "dealership_phone_number": str,
             "dealership_code": str,
-        }
+        },
     )
 
     return df
@@ -117,7 +117,7 @@ def read_potential_customers_table() -> pd.DataFrame:
         CSVTable.POTENTIAL_CUSTOMERS_PATH.value,
         dtype={
             "telefono_cliente": str,
-        }
+        },
     )
 
     return df
@@ -128,7 +128,7 @@ def read_potential_customers_filtering_columns(columns: list[str]) -> pd.DataFra
         CSVTable.POTENTIAL_CUSTOMERS_PATH.value,
         dtype={
             "telefono_cliente": str,
-        }
+        },
     )
     df = df[columns]
     return df
@@ -153,5 +153,3 @@ def edit_potential_customers_table_record(df: pd.DataFrame, new_borrower: Potent
     new_df = df.loc[df["borrower_id"] != borrower_id].copy()
 
     return append_potential_customers_table(new_df, new_borrower)
-
-

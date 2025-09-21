@@ -16,5 +16,3 @@ class SidebarOptions(Enum):
     @classmethod
     def list(cls):
         return [option.value for option in cls]
-
-

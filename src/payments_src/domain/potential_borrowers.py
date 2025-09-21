@@ -1,9 +1,8 @@
 import pandas as pd
-
 from pydantic import ConfigDict
 
-from payments_src.domain.borrowers import Borrower
 from payments_src.domain.borrower_enums import PotentialBorrowerStatus
+from payments_src.domain.borrowers import Borrower
 
 
 class PotentialBorrower(Borrower):
@@ -18,11 +17,11 @@ class PotentialBorrower(Borrower):
 
     def get_status(self):
         return self.status
-    
+
     @classmethod
     def _private_attributes(cls):
         return set(("borrower_id", "path_to_files", "status"))
-    
+
     @classmethod
     def get_fields_and_types(cls):
         return {
@@ -30,11 +29,10 @@ class PotentialBorrower(Borrower):
             for field, field_info in cls.model_fields.items()
             if field not in cls._private_attributes()
         }
-    
+
     @classmethod
     def _non_displayable_attributes(cls):
         return ["path_to_files"]
-    
 
     def create_borrower_from_potential_borrower(self) -> Borrower:
         return Borrower(

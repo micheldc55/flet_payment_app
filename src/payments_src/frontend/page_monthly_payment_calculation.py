@@ -1,8 +1,8 @@
 import streamlit as st
 
+from payments_src.domain.payment_enums import Currency
 from payments_src.frontend.utils import add_n_line_jumps
 from payments_src.operations.payments.monthly_payment_calculations import calculate_monthly_payment
-from payments_src.domain.payment_enums import Currency
 
 
 def monthly_payment_calculation_page():

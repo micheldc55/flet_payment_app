@@ -1,5 +1,6 @@
-import streamlit as st
 from typing import Any
+
+import streamlit as st
 
 from payments_src.domain.borrower_enums import PotentialBorrowerStatus
 
@@ -7,7 +8,7 @@ from payments_src.domain.borrower_enums import PotentialBorrowerStatus
 def get_field_input_widget_potential_borrower(field_name: str, field_info: Any, key: str):
     """Create appropriate input widget based on field type"""
     field_type = field_info.annotation
-    
+
     # Handle different field types
     if field_type == str:
         return st.text_input(field_name, key=key)
@@ -24,12 +25,12 @@ def get_field_input_widget_potential_borrower(field_name: str, field_info: Any, 
     else:
         # Fallback to text input for unknown types
         return st.text_input(field_name, key=key)
-    
+
 
 def get_field_input_widget_car(field_name: str, field_info: Any, key: str):
     """Create appropriate input widget based on field type"""
     field_type = field_info.annotation
-    
+
     # Handle different field types
     if field_type == str:
         return st.text_input(field_name, key=key)
@@ -40,7 +41,7 @@ def get_field_input_widget_car(field_name: str, field_info: Any, key: str):
 def get_field_input_widget_dealership(field_name: str, field_info: Any, key: str):
     """Create appropriate input widget based on field type"""
     field_type = field_info.annotation
-    
+
     # Handle different field types
     if field_type == str:
         return st.text_input(field_name, key=key)

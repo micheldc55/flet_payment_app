@@ -1,6 +1,7 @@
 import argparse
 import os
 
+from payments_src.db.csv_db.db_constants import CSVTable
 from payments_src.db.csv_db.db_initialization_ops import (
     initialize_customer_df,
     initialize_dealership_df,
@@ -15,8 +16,6 @@ from payments_src.db.csv_db.db_operations import (
     write_payments_table,
     write_potential_customers_table,
 )
-from payments_src.db.csv_db.db_constants import CSVTable
-
 
 parser = argparse.ArgumentParser(description="Initialize tables")
 
@@ -34,7 +33,7 @@ args = parser.parse_args()
 def initialize_tables(args: argparse.Namespace) -> None:
     tables_dir = CSVTable.PATH.value
     os.makedirs(tables_dir, exist_ok=True)
-    
+
     if args.customer:
         customer_df = initialize_customer_df()
         write_customers_table(customer_df, args.overwrite)

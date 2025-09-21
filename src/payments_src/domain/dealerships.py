@@ -10,8 +10,8 @@ class Dealership(BaseModel):
 
     @classmethod
     def _private_attributes(cls):
-        return set(("dealership_id", ))
-    
+        return set(("dealership_id",))
+
     @classmethod
     def get_fields_and_types(cls):
         return {
@@ -19,7 +19,6 @@ class Dealership(BaseModel):
             for field, field_info in cls.model_fields.items()
             if field not in cls._private_attributes()
         }
-
 
 
 class DealershipFactory:

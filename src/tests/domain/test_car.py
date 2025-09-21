@@ -26,7 +26,7 @@ def test_car_get_fields_and_types():
         for field, field_info in Car.model_fields.items()
         if field not in Car._private_attributes()
     }
-    
+
     assert parsed_fields == {
         "marca_auto": str,
         "modelo_auto": str,

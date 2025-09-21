@@ -14,29 +14,21 @@ class Borrower(BaseModel):
 
     def _private_attributes(self):
         return set(("borrower_id", "path_to_files"))
-    
+
     @classmethod
     def get_fields_and_types(cls):
         return {
-            field: type(getattr(cls, field))
-            for field in cls.model_fields
-            if field not in cls._private_attributes()
+            field: type(getattr(cls, field)) for field in cls.model_fields if field not in cls._private_attributes()
         }
-    
+
     @classmethod
     def get_displayable_columns(cls):
-        return [
-            field
-            for field, _ in cls.model_fields.items()
-            if field not in cls._non_displayable_attributes()
-        ]
-    
+        return [field for field, _ in cls.model_fields.items() if field not in cls._non_displayable_attributes()]
+
     def to_printable_dataframe(self):
         columns = self.get_displayable_columns()
         values = [
-            str(getattr(self, field))
-            if getattr(self, field) is not None
-            else "N/A" # --> handle None values
+            str(getattr(self, field)) if getattr(self, field) is not None else "N/A"  # --> handle None values
             for field in columns
         ]
         return pd.DataFrame({"propiedad": columns, "valor": values})

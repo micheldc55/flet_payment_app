@@ -26,7 +26,7 @@ def test_borrower_raises_validation_error():
             nombre_cliente="John",
             telefono_cliente="1234567890",
             notas="No notes",
-            path_to_files="path/to/files"
+            path_to_files="path/to/files",
         )
 
     with pytest.raises(pydantic.ValidationError):
@@ -35,7 +35,7 @@ def test_borrower_raises_validation_error():
             nombre_cliente=12345678,
             telefono_cliente="1234567890",
             notas="No notes",
-            path_to_files="path/to/files"
+            path_to_files="path/to/files",
         )
 
     with pytest.raises(pydantic.ValidationError):
@@ -44,7 +44,7 @@ def test_borrower_raises_validation_error():
             nombre_cliente="John",
             telefono_cliente=1234567890,
             notas="No notes",
-            path_to_files="path/to/files"
+            path_to_files="path/to/files",
         )
 
     with pytest.raises(pydantic.ValidationError):
@@ -53,7 +53,7 @@ def test_borrower_raises_validation_error():
             nombre_cliente="John",
             telefono_cliente="1234567890",
             notas=123456,
-            path_to_files="path/to/files"
+            path_to_files="path/to/files",
         )
 
     with pytest.raises(pydantic.ValidationError):
@@ -62,7 +62,7 @@ def test_borrower_raises_validation_error():
             nombre_cliente="John",
             telefono_cliente="1234567890",
             notas="No notes",
-            path_to_files="path/to/files"
+            path_to_files="path/to/files",
         )
 
     with pytest.raises(pydantic.ValidationError):
