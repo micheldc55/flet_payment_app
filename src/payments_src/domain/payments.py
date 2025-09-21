@@ -2,7 +2,7 @@ from datetime import datetime
 from typing import Optional
 
 from dateutil.relativedelta import relativedelta
-from pydantic import BaseModel, ConfigDict, NonNegativeFloat, PositiveInt
+from pydantic import BaseModel, ConfigDict, NonNegativeFloat, PositiveInt, PositiveFloat
 
 from payments_src.domain.payment_enums import Currency, PaymentStatus
 
@@ -25,11 +25,11 @@ class Payment(BaseModel):
 
 
 class PaymentList(BaseModel):
-    num_pagos: PositiveInt
     fecha_inicio: datetime
-    dinero_total_prestado: NonNegativeFloat
-    tasa_interes: NonNegativeFloat
-    pago_mensual: NonNegativeFloat
+    pago_mensual: PositiveFloat
+    num_pagos: PositiveInt
+    dinero_total_prestado: PositiveFloat
+    tasa_interes: PositiveFloat
     moneda: Currency
     payments: dict[PositiveInt, Payment]
 

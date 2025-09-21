@@ -1,33 +1,32 @@
 import os
 import uuid
+from datetime import datetime
 
 import streamlit as st
 
 from payments_src.db.csv_db.db_constants import CSVTable
 from payments_src.db.csv_db.db_operations import (
     append_customers_table,
-    append_potential_customers_table,
-    edit_potential_customers_table_record,
     read_customers_table,
     read_dealership_table,
-    read_potential_customers_filtering_columns,
-    read_potential_customers_table,
     write_customers_table,
-    write_potential_customers_table,
 )
 from payments_src.domain.borrower_enums import PotentialBorrowerStatus
 from payments_src.domain.borrowers import BorrowerFactory
 from payments_src.domain.car import Car
 from payments_src.domain.dealerships import Dealership, DealershipFactory
 from payments_src.domain.loans import LoanFactory
-from payments_src.domain.payments import PaymentListFactory
+from payments_src.domain.loans_enums import LoanStatus
+from payments_src.domain.payments import PaymentListFactory, PaymentList
 from payments_src.domain.potential_borrowers import PotentialBorrower
 from payments_src.frontend.enums.enums_potential_borrowers import PagePotentialBorrowersActions, PotentialBorrowersTitle
 from payments_src.frontend.utils import add_n_line_jumps
+from payments_src.operations.loans.loan_number_calculations import get_next_loan_number
 from payments_src.shared.pydantic_validation_utils import (
     get_field_input_widget_car,
     get_field_input_widget_dealership,
     get_field_input_widget_potential_borrower,
+    get_field_input_widget_payment_list,
 )
 
 
@@ -42,8 +41,10 @@ def add_loan_page():
         borrower_form_data = {}
         car_form_data = {}
         dealership_form_data = {}
+        payment_list_form_data = {}
 
-        form_data = {"borrower": borrower_form_data, "car": car_form_data, "dealership": dealership_form_data}
+        form_data = {"borrower": borrower_form_data, "car": car_form_data, "dealership": dealership_form_data, "payment_list": payment_list_form_data}
+
 
         st.subheader("Datos del Cliente")
         for field_name, field_info in borrower_fields.items():
@@ -54,10 +55,13 @@ def add_loan_page():
             field_value = get_field_input_widget_potential_borrower(
                 field_name=field_name, field_info=field_info, key=f"form_{field_name}"
             )
+            # Normalize the field value: if it's an empty string, coerce to None
+            field_value = field_value or None
 
             borrower_form_data[field_name] = field_value
 
             st.caption(f"Tipo de dato: {field_info.annotation.__name__}")
+
 
         st.subheader("Datos del Vehiculo")
         for field_name, field_info in car_fields.items():
@@ -67,23 +71,40 @@ def add_loan_page():
             field_value = get_field_input_widget_car(
                 field_name=field_name, field_info=field_info, key=f"form_{field_name}"
             )
+            # Normalize the field value: if it's an empty string, coerce to None
+            field_value = field_value or None
 
             car_form_data[field_name] = field_value
 
             st.caption(f"Tipo de dato: {field_info.annotation.__name__}")
 
+
         st.subheader("Automotora")
 
         dealership_table = read_dealership_table()
+        dealership_table_copy = dealership_table.copy()
 
-        dealership_table["display_name"] = (
-            dealership_table["dealership_id"].astype(str) + " - " + dealership_table["name"]
+        dealership_table_copy["display_name"] = (
+            dealership_table_copy["dealership_id"].astype(str) + " - " + dealership_table_copy["name"]
         )
-        dealership_list = dealership_table["display_name"].tolist()
+        dealership_list = dealership_table_copy["display_name"].tolist()
         dealership_list = [None] + dealership_list
 
-        st.selectbox("Selecciona una automotora", dealership_list, index=0, key="dealership_selectbox")
+        selected_dealership = st.selectbox("Selecciona una automotora", dealership_list, index=0, key="dealership_selectbox")
 
+        
+        st.subheader("Datos de la Financiación")
+
+        payment_list_fields = PaymentList.get_fields_and_types()
+
+        for field_name, field_info in payment_list_fields.items():
+            if field_name.startswith("_"):
+                continue
+            field_value = get_field_input_widget_payment_list(field_name=field_name, field_info=field_info, key=f"form_{field_name}")
+            field_value = field_value or None
+            payment_list_form_data[field_name] = field_value
+        
+        
         st.subheader("Subir Archivos")
 
         files = st.file_uploader("Subir archivos", type=["pdf", "jpg", "jpeg", "png"], key="files_uploader")
@@ -94,6 +115,10 @@ def add_loan_page():
         submitted = st.form_submit_button("Agregar Credito")
 
         if submitted:
+            if selected_automotora is None:
+                st.error("Debe seleccionar una automotora para continuar!")
+                raise ValueError("Debe seleccionar una automotora para continuar!")
+
             potential_customers_table = read_potential_customers_table()
             if len(potential_customers_table) == 0:
                 next_id = 1
@@ -103,14 +128,33 @@ def add_loan_page():
 
             # create a new directory for the new user in the database
             new_directory = os.path.join(CSVTable.CUSTOMER_FILES_PATH.value, str(borrower_form_data["borrower_id"]))
-            os.makedirs(new_directory, exist_ok=False)
 
             borrower_form_data["path_to_files"] = new_directory
             borrower_form_data["status"] = PotentialBorrowerStatus.POTENTIAL.value
 
             car_form_data["borrower_id"] = borrower_form_data["borrower_id"]
+            
+            selected_dealership_dict = dealership_table[dealership_table_copy["display_name"] == selected_dealership].iloc[0].to_dict()
 
             new_borrower = PotentialBorrower(**borrower_form_data)
+            new_car = Car(**car_form_data)
+            dealership = Dealership(**selected_dealership_dict)
+            payment_list = PaymentListFactory.create_payment_list(**payment_list_form_data)
+
+            loan_number = get_next_loan_number(dealership.dealership_id)
+
+            # create a new loan with Pending status (default)
+            new_loan = LoanFactory.create_loan(
+                loan_id=hash(datetime.now()),
+                loan_number=loan_number,
+                payment_list=payment_list,
+                borrower=new_borrower,
+                car=new_car,
+                dealership=dealership,
+                status=LoanStatus.POTENTIAL,
+            )
+
+            os.makedirs(new_directory, exist_ok=False)
 
             if files is not None:
                 for file in files:

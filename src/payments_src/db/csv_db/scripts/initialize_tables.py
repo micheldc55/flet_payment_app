@@ -7,14 +7,12 @@ from payments_src.db.csv_db.db_initialization_ops import (
     initialize_dealership_df,
     initialize_loan_df,
     initialize_payments_df,
-    initialize_potential_customers_df,
 )
 from payments_src.db.csv_db.db_operations import (
     write_customers_table,
     write_dealership_table,
     write_loan_table,
     write_payments_table,
-    write_potential_customers_table,
 )
 
 parser = argparse.ArgumentParser(description="Initialize tables")
@@ -23,7 +21,6 @@ parser.add_argument("--customer", action="store_true", help="Initialize customer
 parser.add_argument("--dealership", action="store_true", help="Initialize dealership table")
 parser.add_argument("--loan", action="store_true", help="Initialize loan table")
 parser.add_argument("--payments", action="store_true", help="Initialize payments table")
-parser.add_argument("--potential_customers", action="store_true", help="Initialize potential customers table")
 parser.add_argument("--customer_files", action="store_true", help="Initialize customer files table")
 parser.add_argument("--overwrite", action="store_true", default=False, help="Overwrite existing tables")
 
@@ -53,11 +50,6 @@ def initialize_tables(args: argparse.Namespace) -> None:
         payments_df = initialize_payments_df()
         write_payments_table(payments_df, args.overwrite)
         print("Payments table initialized")
-
-    if args.potential_customers:
-        potential_customers_df = initialize_potential_customers_df()
-        write_potential_customers_table(potential_customers_df, args.overwrite)
-        print("Potential customers table initialized")
 
     if args.customer_files:
         try:

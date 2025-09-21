@@ -6,7 +6,7 @@ from pydantic import BaseModel, ConfigDict, PositiveInt
 from payments_src.domain.borrowers import Borrower, BorrowerFactory
 from payments_src.domain.car import Car
 from payments_src.domain.dealerships import Dealership, DealershipFactory
-from payments_src.domain.loans_enums import LoanConstants
+from payments_src.domain.loans_enums import LoanConstants, LoanStatus
 from payments_src.domain.payments import PaymentList, PaymentListFactory
 from payments_src.domain.potential_borrowers import PotentialBorrower
 
@@ -19,6 +19,7 @@ class Loan(BaseModel):
     borrower: Borrower
     car: Car
     dealership: Dealership
+    status: LoanStatus
 
     def to_json_dict(self) -> dict:
         """
@@ -32,6 +33,7 @@ class Loan(BaseModel):
             "borrower": json.dumps(self.borrower.model_dump(mode="json"), default=str),
             "car": json.dumps(self.car.model_dump(mode="json"), default=str),
             "dealership": json.dumps(self.dealership.model_dump(mode="json"), default=str),
+            "status": self.status,
         }
 
     @classmethod
@@ -47,15 +49,8 @@ class Loan(BaseModel):
             borrower=Borrower.model_validate(json.loads(data["borrower"])),
             car=Car.model_validate(json.loads(data["car"])),
             dealership=Dealership.model_validate(json.loads(data["dealership"])),
+            status=data["status"],
         )
-
-
-class PotentialLoan(BaseModel):
-    model_config = ConfigDict(use_enum_values=True)
-    loan_id: PositiveInt
-    borrower: PotentialBorrower
-    car: Car
-    dealership: Dealership
 
 
 class LoanFactory:
@@ -68,6 +63,7 @@ class LoanFactory:
         borrower: Borrower,
         car: Car,
         dealership: Dealership,
+        status: LoanStatus = LoanStatus.POTENTIAL,
     ) -> Loan:
         loan_readable_code = cls._create_loan_readable_code(dealership.dealership_code, loan_number)
         return Loan(
@@ -77,10 +73,13 @@ class LoanFactory:
             borrower=borrower,
             car=car,
             dealership=dealership,
+            status=status,
         )
 
     @classmethod
     def create_loan_from_dict(cls: "LoanFactory", loan_dict: dict) -> Loan:
+        status = loan_dict["status"] if "status" in loan_dict else LoanStatus.POTENTIAL
+        
         return Loan(
             loan_id=loan_dict["loan_id"],
             loan_readable_code=cls._create_loan_readable_code(
@@ -89,6 +88,7 @@ class LoanFactory:
             payment_list=PaymentListFactory.create_payment_list(loan_dict["payment_list"]),
             borrower=BorrowerFactory.create_borrower(loan_dict["borrower"]),
             dealership=DealershipFactory.create_dealership(loan_dict["dealership"]),
+            status=status,
         )
 
     @classmethod
@@ -118,17 +118,3 @@ class LoanFactory:
     def _create_loan_readable_code(cls: "LoanFactory", dealership_code: str, loan_number: PositiveInt) -> str:
         zeros_filled_number = cls._fill_number_with_left_zeros(loan_number, LoanConstants.LOAN_ID_TOTAL_DIGITS.value)
         return dealership_code + "-" + zeros_filled_number
-
-
-class PotentialLoanFactory:
-    @classmethod
-    def create_potential_loan(
-        cls: "PotentialLoanFactory", loan_id: PositiveInt, borrower: PotentialBorrower, dealership: Dealership, car: Car
-    ) -> PotentialLoan:
-        loan_readable_code = cls._create_loan_readable_code(dealership.dealership_code, loan_id)
-        return PotentialLoan(
-            loan_id=loan_id,
-            borrower=borrower,
-            car=car,
-            dealership=dealership,
-        )

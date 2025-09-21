@@ -37,11 +37,3 @@ def initialize_payments_df() -> None:
     df = pd.DataFrame(columns=payments_fields.keys())
 
     return df
-
-
-def initialize_potential_customers_df() -> None:
-    potential_customers_fields = PotentialBorrower.model_fields
-
-    df = pd.DataFrame(columns=potential_customers_fields.keys())
-
-    return df
