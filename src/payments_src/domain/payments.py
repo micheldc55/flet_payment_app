@@ -97,7 +97,7 @@ class PaymentListFactory:
             ids = list(range(1, num_pagos + 1))
 
         list_payments = {
-            identifier:PaymentFactory.create_payment(
+            identifier: PaymentFactory.create_payment(
                 amount=pago_mensual,
                 end_date=fecha_inicio + relativedelta(months=i),
                 status=PaymentStatus.PENDING,

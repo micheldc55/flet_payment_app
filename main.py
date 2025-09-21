@@ -6,6 +6,7 @@ from payments_src.frontend.page_inicio import inicio_page
 from payments_src.frontend.page_active_loans import active_loans_page
 from payments_src.frontend.page_monthly_payment_calculation import monthly_payment_calculation_page
 from payments_src.frontend.page_potential_borrowers import potential_borrowers_page
+from payments_src.frontend.page_dealership_management import dealership_management_page
 
 
 def main():
@@ -24,6 +25,9 @@ def main():
 
     elif selected_option == SidebarOptions.CREDITOS_ACTIVOS.value:
         active_loans_page()
+
+    elif selected_option == SidebarOptions.GESTION_AUTOMOTORAS.value:
+        dealership_management_page()
 
 if __name__ == "__main__":
     main()

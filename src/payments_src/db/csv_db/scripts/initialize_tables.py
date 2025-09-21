@@ -9,7 +9,7 @@ from payments_src.db.csv_db.db_initialization_ops import (
     initialize_potential_customers_df,
 )
 from payments_src.db.csv_db.db_operations import (
-    write_customer_table,
+    write_customers_table,
     write_dealership_table,
     write_loan_table,
     write_payments_table,
@@ -32,9 +32,12 @@ args = parser.parse_args()
 
 
 def initialize_tables(args: argparse.Namespace) -> None:
+    tables_dir = CSVTable.PATH.value
+    os.makedirs(tables_dir, exist_ok=True)
+    
     if args.customer:
         customer_df = initialize_customer_df()
-        write_customer_table(customer_df, args.overwrite)
+        write_customers_table(customer_df, args.overwrite)
         print("Customer table initialized")
 
     if args.dealership:
@@ -73,4 +76,4 @@ if __name__ == "__main__":
 # python src/payments_src/db/csv_db/scripts/initialize_tables.py --customer --dealership --loan --payments
 
 # Example usage (uv): (Initializes all tables)
-# uv run python src/payments_src/db/csv_db/scripts/initialize_tables.py --customer --dealership --loan --payments
+# uv run python src/payments_src/db/csv_db/scripts/initialize_tables.py --customer --overwrite --dealership --loan --payments --potential_customers

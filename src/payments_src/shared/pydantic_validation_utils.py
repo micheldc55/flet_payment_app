@@ -35,3 +35,14 @@ def get_field_input_widget_car(field_name: str, field_info: Any, key: str):
         return st.text_input(field_name, key=key)
     elif field_type == int:
         return st.number_input(field_name, step=1, key=key)
+
+
+def get_field_input_widget_dealership(field_name: str, field_info: Any, key: str):
+    """Create appropriate input widget based on field type"""
+    field_type = field_info.annotation
+    
+    # Handle different field types
+    if field_type == str:
+        return st.text_input(field_name, key=key)
+    elif field_type == int:
+        return st.number_input(field_name, step=1, key=key)

@@ -11,6 +11,7 @@ class SidebarOptions(Enum):
     CREDITOS_POTENCIALES = "Creditos Potenciales"
     CREDITOS_ACTIVOS = "Creditos Activos"
     ESTADISTICAS = "Estadisticas"
+    GESTION_AUTOMOTORAS = "Gestion de Automotoras"
 
     @classmethod
     def list(cls):
