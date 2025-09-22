@@ -24,6 +24,9 @@ def write_customers_table(df: pd.DataFrame, overwrite: bool = False) -> None:
 
 
 def append_customers_table(df: pd.DataFrame, new_borrower: Borrower) -> None:
+    if new_borrower.borrower_id in df["borrower_id"].values:
+        raise ValueError(f"Borrower with ID {new_borrower.borrower_id} already exists")
+    
     df = pd.concat([df, pd.DataFrame([new_borrower.model_dump()])], ignore_index=True)
 
     return df
@@ -32,9 +35,12 @@ def append_customers_table(df: pd.DataFrame, new_borrower: Borrower) -> None:
 def edit_customers_table_record(df: pd.DataFrame, new_borrower: Borrower) -> None:
     borrower_id = new_borrower.borrower_id
 
+    if borrower_id not in df["borrower_id"].values:
+        raise ValueError(f"Borrower with ID {borrower_id} does not exist")
+    
     new_df = df.loc[df["borrower_id"] != borrower_id].copy()
 
-    return append_potential_customers_table(new_df, new_borrower)
+    return append_customers_table(new_df, new_borrower)
 
 
 def read_dealership_table() -> pd.DataFrame:
@@ -50,6 +56,9 @@ def read_dealership_table() -> pd.DataFrame:
 
 
 def append_dealership_table(df: pd.DataFrame, new_dealership: Dealership) -> None:
+    if new_dealership.dealership_id in df["dealership_id"].values:
+        raise ValueError(f"Dealership with ID {new_dealership.dealership_id} already exists")
+    
     df = pd.concat([df, pd.DataFrame([new_dealership.model_dump()])], ignore_index=True)
 
     return df
@@ -57,7 +66,10 @@ def append_dealership_table(df: pd.DataFrame, new_dealership: Dealership) -> Non
 
 def edit_dealership_table_record(df: pd.DataFrame, new_dealership: Dealership) -> pd.DataFrame:
     dealership_id = new_dealership.dealership_id
-
+    
+    if dealership_id not in df["dealership_id"].values:
+        raise ValueError(f"Dealership with ID {dealership_id} does not exist")
+    
     new_df = df.loc[df["dealership_id"] != dealership_id].copy()
 
     return append_dealership_table(new_df, new_dealership)
@@ -89,17 +101,13 @@ def read_loan_table() -> pd.DataFrame:
     return df
 
 
-def write_loan_table(df: pd.DataFrame, overwrite: bool = False) -> None:
-    if (os.path.exists(CSVTable.LOAN_PATH.value)) and (overwrite == False):
-        raise FileExistsError(f"File {CSVTable.LOAN_PATH.value} already exists")
-
-    df.to_csv(CSVTable.LOAN_PATH.value, index=False)
-
-
 def append_loan_table(df: pd.DataFrame, new_loan: Loan) -> pd.DataFrame:
     """
     Append a new loan to the DataFrame using JSON serialization for nested objects.
     """
+    if new_loan.loan_id in df["loan_id"].values:
+        raise ValueError(f"Loan with ID {new_loan.loan_id} already exists")
+    
     df = pd.concat([df, pd.DataFrame([new_loan.to_json_dict()])], ignore_index=True)
     return df
 
@@ -108,7 +116,17 @@ def edit_loan_table_record(df: pd.DataFrame, updated_loan: Loan) -> pd.DataFrame
     """
     Edit an existing loan record in the DataFrame using JSON serialization for nested objects.
     """
+    if updated_loan.loan_id not in df["loan_id"].values:
+        raise ValueError(f"Loan with ID {updated_loan.loan_id} does not exist")
+    
     loan_id = updated_loan.loan_id
     new_df = df.loc[df["loan_id"] != loan_id].copy()
     return append_loan_table(new_df, updated_loan)
+
+
+def write_loan_table(df: pd.DataFrame, overwrite: bool = False) -> None:
+    if (os.path.exists(CSVTable.LOAN_PATH.value)) and (overwrite == False):
+        raise FileExistsError(f"File {CSVTable.LOAN_PATH.value} already exists")
+
+    df.to_csv(CSVTable.LOAN_PATH.value, index=False)
 

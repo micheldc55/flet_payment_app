@@ -9,5 +9,4 @@ class CSVTable(Enum):
     DEALERSHIP_PATH = os.path.join(_base_path, "dealership.csv")
     LOAN_PATH = os.path.join(_base_path, "loan.csv")
     PAYMENTS_PATH = os.path.join(_base_path, "payments.csv")
-    POTENTIAL_CUSTOMERS_PATH = os.path.join(_base_path, "potential_customers.csv")
     CUSTOMER_FILES_PATH = os.path.join(_base_path, "customer_files")

@@ -1,7 +1,16 @@
+import argparse
 import logging
 import os
 import shutil
 from pathlib import Path
+
+parser = argparse.ArgumentParser(description="Clear all CSV tables")
+
+parser.add_argument("--clear_all_tables", action="store_true", help="Clear all CSV tables")
+
+args = parser.parse_args()
+
+clear_all_tables = args.clear_all_tables
 
 
 def clear_all_csv_tables() -> None:
@@ -33,3 +42,14 @@ def clear_all_csv_tables() -> None:
     except Exception as e:
         logging.error(f"Error clearing tables: {e}")
         raise
+
+
+if __name__ == "__main__":
+    if clear_all_tables:
+        approval = input("Are you sure you want to clear all tables? (y/n): ")
+        if approval == "y":
+            clear_all_csv_tables()
+        else:
+            logging.warning("No tables were cleared")
+    else:
+        logging.warning("No tables were cleared")

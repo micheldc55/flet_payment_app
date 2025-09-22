@@ -67,4 +67,4 @@ if __name__ == "__main__":
 # python src/payments_src/db/csv_db/scripts/initialize_tables.py --customer --dealership --loan --payments
 
 # Example usage (uv): (Initializes all tables)
-# uv run python src/payments_src/db/csv_db/scripts/initialize_tables.py --customer --overwrite --dealership --loan --payments --potential_customers
+# uv run python src/payments_src/db/csv_db/scripts/initialize_tables.py --customer --overwrite --dealership --loan --payments

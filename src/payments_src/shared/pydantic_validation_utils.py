@@ -60,6 +60,7 @@ def get_field_input_widget_payment_list(field_name: str, field_info: Any, key: s
     elif field_type == int:
         return st.number_input(field_name, step=1, key=key)
     elif field_type == float:
+    elif field_type == float:
         return st.number_input(field_name, step=0.01, key=key)
     elif field_type == datetime:
         return st.date_input(field_name, key=key, value=datetime.today())

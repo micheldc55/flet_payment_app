@@ -115,16 +115,12 @@ def add_loan_page():
         submitted = st.form_submit_button("Agregar Credito")
 
         if submitted:
-            if selected_automotora is None:
+            if selected_dealership is None:
                 st.error("Debe seleccionar una automotora para continuar!")
                 raise ValueError("Debe seleccionar una automotora para continuar!")
 
-            potential_customers_table = read_potential_customers_table()
-            if len(potential_customers_table) == 0:
-                next_id = 1
-            else:
-                next_id = potential_customers_table["borrower_id"].astype(int).max() + 1
-            borrower_form_data["borrower_id"] = next_id
+            
+            borrower_form_data["borrower_id"] = hash(datetime.now())
 
             # create a new directory for the new user in the database
             new_directory = os.path.join(CSVTable.CUSTOMER_FILES_PATH.value, str(borrower_form_data["borrower_id"]))
@@ -143,9 +139,12 @@ def add_loan_page():
 
             loan_number = get_next_loan_number(dealership.dealership_id)
 
+            borrower_table = read_customers_table()
+            loan_table = read_loan_table()
+
             # create a new loan with Pending status (default)
             new_loan = LoanFactory.create_loan(
-                loan_id=hash(datetime.now()),
+                loan_id=loan_table.shape[0] + 1,
                 loan_number=loan_number,
                 payment_list=payment_list,
                 borrower=new_borrower,
@@ -163,10 +162,13 @@ def add_loan_page():
                     with open(file_path, "wb") as f:
                         f.write(file.getvalue())
 
-            # save the new_borrower to the database
-            potential_customers_table = read_potential_customers_table()
-            potential_customers_table = append_potential_customers_table(potential_customers_table, new_borrower)
-            write_potential_customers_table(potential_customers_table, overwrite=True)
+            # save the new borrower to the database
+            borrower_table = append_customers_table(borrower_table, new_borrower)
+            write_customers_table(borrower_table, overwrite=True)
+            
+            # save the new loan to the database
+            loan_table = append_loan_table(loan_table, new_loan)
+            write_loan_table(loan_table, overwrite=True)
             st.success(f"Préstamo agregado exitosamente! ID: {new_borrower.borrower_id}")
 
 
