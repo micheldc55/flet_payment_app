@@ -14,6 +14,7 @@ class Payment(BaseModel):
     amount: NonNegativeFloat
     end_date: datetime
     status: PaymentStatus
+    date_paid: Optional[datetime] = None
 
     def change_status(self, status: PaymentStatus) -> None:
         self.status = status
@@ -24,6 +25,9 @@ class Payment(BaseModel):
     def change_end_date(self, end_date: datetime) -> None:
         self.end_date = end_date
 
+    def change_date_paid(self, date_paid: datetime) -> None:
+        self.date_paid = date_paid
+
 
 class PaymentList(BaseModel):
     fecha_inicio: datetime
@@ -33,7 +37,7 @@ class PaymentList(BaseModel):
     tasa_interes: PositiveFloat
     moneda: Currency
     payments: dict[PositiveInt, Payment]
-
+    
     @classmethod
     def model_validate(cls, value):
         obj = super().model_validate(value)
@@ -86,10 +90,11 @@ class PaymentFactory:
         end_date: datetime,
         id: int,
         status: Optional[PaymentStatus] = None,
+        date_paid: Optional[datetime] = None,
     ) -> Payment:
         if status is None:
             status = PaymentStatus.PENDING
-        return Payment(id=id, amount=amount, end_date=end_date, status=status)
+        return Payment(id=id, amount=amount, end_date=end_date, status=status, date_paid=date_paid)
 
 
 class PaymentListFactory:
@@ -112,6 +117,7 @@ class PaymentListFactory:
                 end_date=fecha_inicio + relativedelta(months=i),
                 status=PaymentStatus.PENDING,
                 id=identifier,
+                date_paid=None,
             )
             for i, identifier in zip(range(num_pagos), ids)
         }
@@ -136,7 +142,8 @@ class PaymentListFactory:
             tasa_interes=payment_record_dict["tasa_interes"],
             moneda=payment_record_dict["moneda"],
             payments=payment_record_dict["payments"],
-        )
+            date_paid=payment_record_dict.get("date_paid", None),
+        ) 
 
     
     @staticmethod
@@ -150,4 +157,5 @@ class PaymentListFactory:
             tasa_interes=payment_record_dict["tasa_interes"],
             moneda=payment_record_dict["moneda"],
             payments=payment_record_dict["payments"],
+            date_paid=payment_record_dict.get("date_paid", None),
         )
