@@ -95,3 +95,7 @@ Make sure your PYTHONPATH is pointing to the project root directory, this can be
 ```
 PYTHONPATH=./src pytest
 ```
+
+## TODO
+
+- Add a "Creditos Rechazados" tab to make changes on rejected credits as well.

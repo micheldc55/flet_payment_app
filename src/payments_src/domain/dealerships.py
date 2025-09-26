@@ -1,3 +1,5 @@
+import json
+
 from pydantic import BaseModel, ConfigDict, PositiveInt
 
 
@@ -22,6 +24,7 @@ class Dealership(BaseModel):
 
 
 class DealershipFactory:
+    @staticmethod
     def create_dealership(
         dealership_id: PositiveInt,
         name: str,
@@ -33,4 +36,14 @@ class DealershipFactory:
             name=name,
             dealership_code=dealership_code,
             dealership_phone_number=dealership_phone_number,
+        )
+    
+    @staticmethod
+    def create_from_dealership_record_str(dealership_record_str: str) -> Dealership:
+        dealership_record_dict = json.loads(dealership_record_str)
+        return Dealership(
+            dealership_id=dealership_record_dict["dealership_id"],
+            name=dealership_record_dict["name"],
+            dealership_code=dealership_record_dict["dealership_code"],
+            dealership_phone_number=dealership_record_dict["dealership_phone_number"],
         )

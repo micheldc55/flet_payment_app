@@ -1,3 +1,4 @@
+import json
 from typing import Optional
 
 import pandas as pd
@@ -12,13 +13,16 @@ class Borrower(BaseModel):
     notas: str
     path_to_files: Optional[str] = None
 
-    def _private_attributes(self):
+    @classmethod
+    def _private_attributes(cls):
         return set(("borrower_id", "path_to_files"))
 
     @classmethod
     def get_fields_and_types(cls):
         return {
-            field: type(getattr(cls, field)) for field in cls.model_fields if field not in cls._private_attributes()
+            field: field_info
+            for field, field_info in cls.model_fields.items()
+            if field not in cls._private_attributes()
         }
 
     @classmethod
@@ -35,6 +39,7 @@ class Borrower(BaseModel):
 
 
 class BorrowerFactory:
+    @staticmethod
     def create_borrower(
         borrower_id: PositiveInt,
         name: str,
@@ -48,4 +53,16 @@ class BorrowerFactory:
             telefono_cliente=phone_number,
             notas=notes,
             path_to_files=path_to_files,
+        )
+
+    
+    @staticmethod
+    def create_from_borrower_record_str(borrower_record_str: str) -> Borrower:
+        borrower_record_dict = json.loads(borrower_record_str)
+        return Borrower(
+            borrower_id=borrower_record_dict["borrower_id"],
+            nombre_cliente=borrower_record_dict["nombre_cliente"],
+            telefono_cliente=borrower_record_dict["telefono_cliente"],
+            notas=borrower_record_dict["notas"],
+            path_to_files=borrower_record_dict["path_to_files"],
         )

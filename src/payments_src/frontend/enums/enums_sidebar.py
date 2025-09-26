@@ -16,3 +16,12 @@ class SidebarOptions(Enum):
     @classmethod
     def list(cls):
         return [option.value for option in cls]
+
+
+class SidebarQuickAccess(Enum):
+    CALCULADORA_DE_PAGOS = "Calculadora de Pagos"
+    OCULTAR = "Ocultar"
+
+    @classmethod
+    def list(cls):
+        return [option.value for option in cls]

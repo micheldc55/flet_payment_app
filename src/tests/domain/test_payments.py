@@ -129,3 +129,39 @@ def test_factory_create_payment_list_no_ids():
     assert payment_list.payments[1].id == 1
     assert payment_list.payments[2].id == 2
     assert payment_list.payments[12].id == 12
+
+
+def test_payment_list_raises_validation_error():
+    with pytest.raises(pydantic.ValidationError):
+        PaymentList(
+            tasa_interes=-0.05,
+            pago_mensual=100,
+            fecha_inicio=datetime(2025, 1, 1),
+            num_pagos=12,
+            moneda=Currency.UYU,
+            payments={
+                1: Payment(
+                    amount=100,
+                    end_date=datetime(2025, 1, 1),
+                    id=1,
+                    status=PaymentStatus.PENDING,
+                ),
+            },
+        )
+
+    with pytest.raises(pydantic.ValidationError):
+        PaymentList(
+            tasa_interes=1.05,
+            pago_mensual=100,
+            fecha_inicio=datetime(2025, 1, 1),
+            num_pagos=12,
+            moneda=Currency.UYU,
+            payments={
+                1: Payment(
+                    amount=100,
+                    end_date=datetime(2025, 1, 1),
+                    id=1,
+                    status=PaymentStatus.PENDING,
+                ),
+            },
+        )

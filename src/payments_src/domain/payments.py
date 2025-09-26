@@ -1,3 +1,4 @@
+import json
 from datetime import datetime
 from typing import Optional
 
@@ -32,6 +33,13 @@ class PaymentList(BaseModel):
     tasa_interes: PositiveFloat
     moneda: Currency
     payments: dict[PositiveInt, Payment]
+
+    @classmethod
+    def model_validate(cls, value):
+        obj = super().model_validate(value)
+        if not (0 < obj.tasa_interes < 1):
+            raise ValueError("tasa_interes must be a float between 0 and 1 (exclusive)")
+        return obj
 
     def add_payment(self, payment: Payment) -> None:
         assert isinstance(payment, Payment), "You must pass a Payment object to the `add_payment` method"
@@ -72,6 +80,7 @@ class PaymentList(BaseModel):
 
 
 class PaymentFactory:
+    @staticmethod
     def create_payment(
         amount: NonNegativeFloat,
         end_date: datetime,
@@ -84,6 +93,7 @@ class PaymentFactory:
 
 
 class PaymentListFactory:
+    @staticmethod
     def create_payment_list(
         dinero_total_prestado: float,
         tasa_interes: float,
@@ -113,4 +123,31 @@ class PaymentListFactory:
             tasa_interes=tasa_interes,
             pago_mensual=pago_mensual,
             moneda=moneda,
+        )
+
+    
+    @staticmethod
+    def create_from_payment_list_record_dict(payment_record_dict: dict) -> PaymentList:
+        return PaymentList(
+            fecha_inicio=payment_record_dict["fecha_inicio"],
+            pago_mensual=payment_record_dict["pago_mensual"],
+            num_pagos=payment_record_dict["num_pagos"],
+            dinero_total_prestado=payment_record_dict["dinero_total_prestado"],
+            tasa_interes=payment_record_dict["tasa_interes"],
+            moneda=payment_record_dict["moneda"],
+            payments=payment_record_dict["payments"],
+        )
+
+    
+    @staticmethod
+    def create_from_payment_list_record_str(payment_record_str: str) -> PaymentList:
+        payment_record_dict = json.loads(payment_record_str)
+        return PaymentList(
+            fecha_inicio=payment_record_dict["fecha_inicio"],
+            pago_mensual=payment_record_dict["pago_mensual"],
+            num_pagos=payment_record_dict["num_pagos"],
+            dinero_total_prestado=payment_record_dict["dinero_total_prestado"],
+            tasa_interes=payment_record_dict["tasa_interes"],
+            moneda=payment_record_dict["moneda"],
+            payments=payment_record_dict["payments"],
         )

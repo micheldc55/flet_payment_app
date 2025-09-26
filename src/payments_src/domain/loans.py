@@ -21,6 +21,10 @@ class Loan(BaseModel):
     dealership: Dealership
     status: LoanStatus
 
+    @property
+    def _private_attributes(self) -> set[str]:
+        return set(("payment_list", ))
+
     def to_json_dict(self) -> dict:
         """
         Convert the Loan object to a dictionary with nested objects serialized as JSON strings.
@@ -51,6 +55,15 @@ class Loan(BaseModel):
             dealership=Dealership.model_validate(json.loads(data["dealership"])),
             status=data["status"],
         )
+
+    def approve_loan(self) -> None:
+        self.status = LoanStatus.APPROVED.value
+
+    def reject_loan(self) -> None:
+        self.status = LoanStatus.REJECTED.value
+
+    def reset_status(self) -> None:
+        self.status = LoanStatus.POTENTIAL.value
 
 
 class LoanFactory:
