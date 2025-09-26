@@ -14,6 +14,11 @@ def payment_management_page():
     st.title("Gestión de Pagos")
     
     # Action selection
+    st.write("Selecciona la acción que deseas realizar. Puedes elegir entre:")
+    st.write("• **Marcar pago como pagado**: Marcar pagos individuales o por mes como pagados.")
+    st.write("• **Editar pago**: Editar datos depagos individuales o por mes. Podrás modificar el monto, la fecha de vencimiento y la fecha de pago.")
+    st.write("• **Ver pagos**: Ver pagos individuales o por mes. También podrás generar reportes de pagos.")
+    add_n_line_jumps(1)
     short_col, _ = st.columns([1, 3])
     selected_action = short_col.selectbox(
         "Selecciona una acción", 
@@ -619,6 +624,7 @@ def view_payments_by_month(all_payments):
     paid_month_payments = len([p for p in month_payments if p['status'] == PaymentStatus.PAID.value])
     pending_month_payments = total_month_payments - paid_month_payments
     
+    add_n_line_jumps(1)
     st.subheader(f"Pagos del mes {selected_month}")
     
     col1, col2, col3 = st.columns(3)
@@ -715,9 +721,9 @@ def view_payments_by_month(all_payments):
         if reporte:
                 st.success("📊 Reporte generado exitosamente")
                 st.write(f"**Resumen del mes {selected_month}:**")
-                st.write(f"• Total de pagos: {total_month_payments}")
-                st.write(f"• Pagos realizados: {paid_month_payments}")
-                st.write(f"• Pagos pendientes: {pending_month_payments}")
-                st.write(f"• Clientes vencidos: {len([p for p in pending_payments_for_month if (p['end_date'].date() - today).days < 0])}")
+                st.write(f"• Total de pagos a recibir este mes: {total_month_payments}")
+                st.write(f"• Pagos realizados este mes: {paid_month_payments}")
+                st.write(f"• Pagos pendientes este mes: {pending_month_payments}")
+                st.write(f"• Clientes atrasados este mes: {len([p for p in pending_payments_for_month if (p['end_date'].date() - today).days < 0])}")
     else:
         st.success("🎉 ¡Excelente! Todos los pagos de este mes han sido realizados.")

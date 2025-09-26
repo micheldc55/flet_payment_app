@@ -8,7 +8,6 @@ from payments_src.domain.car import Car
 from payments_src.domain.dealerships import Dealership, DealershipFactory
 from payments_src.domain.loans_enums import LoanConstants, LoanStatus
 from payments_src.domain.payments import PaymentList, PaymentListFactory
-from payments_src.domain.potential_borrowers import PotentialBorrower
 
 
 class Loan(BaseModel):

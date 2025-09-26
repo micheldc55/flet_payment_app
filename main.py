@@ -8,6 +8,7 @@ from payments_src.frontend.page_monthly_payment_calculation import monthly_payme
 from payments_src.frontend.page_potential_borrowers import potential_borrowers_page
 from payments_src.frontend.page_dealership_management import dealership_management_page
 from payments_src.frontend.page_payment_management import payment_management_page
+from payments_src.frontend.page_statistics import statistics_page
 
 
 def main():
@@ -31,7 +32,7 @@ def main():
         payment_management_page()
 
     elif selected_option == SidebarOptions.ESTADISTICAS.value:
-        pass
+        statistics_page()
 
     elif selected_option == SidebarOptions.GESTION_AUTOMOTORAS.value:
         dealership_management_page()
