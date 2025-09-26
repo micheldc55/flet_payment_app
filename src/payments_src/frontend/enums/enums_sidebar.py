@@ -10,6 +10,7 @@ class SidebarOptions(Enum):
     CALCULADORA_DE_PAGOS = "Calculadora de Pagos"
     CREDITOS_POTENCIALES = "Creditos Potenciales"
     CREDITOS_ACTIVOS = "Creditos Activos"
+    PAYMENT_MANAGEMENT = "Gestion de Pagos"
     ESTADISTICAS = "Estadisticas"
     GESTION_AUTOMOTORAS = "Gestion de Automotoras"
 

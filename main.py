@@ -26,6 +26,13 @@ def main():
     elif selected_option == SidebarOptions.CREDITOS_ACTIVOS.value:
         active_loans_page()
 
+    elif selected_option == SidebarOptions.PAYMENT_MANAGEMENT.value:
+        # payment_management_page()
+        pass
+
+    elif selected_option == SidebarOptions.ESTADISTICAS.value:
+        pass
+
     elif selected_option == SidebarOptions.GESTION_AUTOMOTORAS.value:
         dealership_management_page()
 
